@@ -101,7 +101,9 @@ export default function SkillsStats() {
       <div className="grid grid-cols-2 gap-2.5">
         <motion.div
           variants={itemVariants}
-          className="rounded-2xl bg-white p-6 transition-transform duration-300 ease-out hover:scale-105"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="cursor-pointer rounded-2xl bg-white p-6"
         >
           <div className="flex items-center justify-between">
             <p className="flex items-center gap-1 text-[11px] text-[#4a4a4a]">
@@ -116,7 +118,9 @@ export default function SkillsStats() {
 
         <motion.div
           variants={itemVariants}
-          className="rounded-2xl bg-[#E86100] p-6 transition-transform duration-300 ease-out hover:scale-105"
+          whileHover={{ scale: 1.05 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="cursor-pointer rounded-2xl bg-[#E86100] p-6"
         >
           <div className="flex items-center justify-between">
             <p className="flex items-center gap-1 text-[11px] text-white/80">
