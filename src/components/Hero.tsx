@@ -8,7 +8,7 @@ export default function Hero() {
   const { ready } = useIntroReady();
 
   return (
-    <section className="relative min-h-screen w-full overflow-hidden bg-black">
+    <section className="relative h-full w-full overflow-hidden bg-black">
       <LiquidReveal />
       <motion.a
         href="/"

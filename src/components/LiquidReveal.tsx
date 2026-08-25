@@ -95,7 +95,16 @@ export default function LiquidReveal() {
     let points: Point[] = []
     let last: Point | null = null
 
+    // The hero stays pinned under the gallery sheet, so once the page has
+    // scrolled ~one viewport it is fully covered — stop all canvas work then.
+    const isCovered = () => window.scrollY >= window.innerHeight * 0.98
+    let wasCovered = false
+
     const onPointerMove = (e: PointerEvent) => {
+      if (isCovered()) {
+        last = null
+        return
+      }
       const rect = container.getBoundingClientRect()
       const x = (e.clientX - rect.left) * dpr
       const y = (e.clientY - rect.top) * dpr
@@ -141,6 +150,19 @@ export default function LiquidReveal() {
     let rafId = 0
 
     const tick = () => {
+      if (isCovered()) {
+        if (!wasCovered) {
+          wasCovered = true
+          points = []
+          last = null
+          idle = FADE_FRAMES + 1
+          ctx.clearRect(0, 0, canvasW, canvasH)
+        }
+        rafId = requestAnimationFrame(tick)
+        return
+      }
+      wasCovered = false
+
       const drawing = points.length > 0
       if (drawing) {
         idle = 0

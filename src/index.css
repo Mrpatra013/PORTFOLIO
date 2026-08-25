@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  /* Chrome/Safari paint autofilled inputs with their own pale background.
+     Repaint that box with the card's color so typing/autofill stays flush
+     with the card, and keep the value text white. */
+  .card-input:-webkit-autofill,
+  .card-input:-webkit-autofill:hover,
+  .card-input:-webkit-autofill:focus,
+  .card-input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px theme('colors.accent') inset;
+    box-shadow: 0 0 0 1000px theme('colors.accent') inset;
+    -webkit-text-fill-color: #ffffff;
+    caret-color: #ffffff;
+    /* Outlast the browser's own background repaint. */
+    transition: background-color 600000s 0s ease-in-out;
+  }
+}
