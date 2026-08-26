@@ -15,7 +15,7 @@ export default function ProjectGallery() {
       className="relative flex h-svh min-h-[600px] flex-col rounded-t-[2.5rem] bg-[#0a0a0a] px-5 py-10 shadow-[0_-32px_80px_rgba(0,0,0,0.45)] md:px-10 md:py-12"
     >
       <DragCards
-        items={galleryItems.map(({ id, src, alt, label }) => ({ id, src, alt, title: label }))}
+        items={galleryItems.map(({ id, src, video, alt, label }) => ({ id, src, video, alt, title: label }))}
         className="flex-1"
         center={
           <motion.div {...revealProps}>

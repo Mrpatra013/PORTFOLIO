@@ -5,23 +5,30 @@
 
 export interface GalleryItem {
   id: string
-  src: string // e.g. '/gallery/nova-commerce.gif' — empty string renders a placeholder
+  /** First-frame still: the video poster, and the fallback if playback fails. */
+  src: string
+  /** Full web-encoded clip — the drag-cards stage plays these end to end. */
+  video: string
+  /** First 15s of the same clip — the cover on the project deck's cards. */
+  coverVideo: string
   alt: string
   label: string
   // Deck-card copy — placeholder wording, safe to rewrite.
   blurb: string
   views: string
   likes: string
-}
-
-export interface Project {
-  id: string
-  name: string
-  tags: string[]
-  year: string
-  href: string // live project URL
-  src: string // stock image for now — swap for real project shots
-  alt: string
+  /** Full project name for the deck card; falls back to `label`. */
+  name?: string
+  year?: string
+  /** GitHub repo URL. Omit → no Code pill on the card. */
+  repo?: string
+  /**
+   * Path to the built demo under public/, e.g. '/demos/nova/'. Omit → the card
+   * shows Code only. Declared here *and* verified at runtime against
+   * public/demos/manifest.json, so a stale entry can't ship a dead link.
+   * Add one with: node scripts/add-demo.mjs <id> <path-to-that-project>/dist
+   */
+  demo?: string
 }
 
 export interface Service {
@@ -41,7 +48,7 @@ export interface Social {
   href: string
 }
 
-export const contactEmail = 'hello@thedesk.studio'
+export const contactEmail = 'thedesk.studioo@gmail.com'
 
 export const navLinks = [
   { label: 'About', href: '#about' },
@@ -49,56 +56,159 @@ export const navLinks = [
   { label: 'Contact Us', href: '#contact' },
 ]
 
-// Stock images for now — swap each src for '/gallery/<name>.gif' once real GIFs land.
+// The ten screen-recorded reels, web-encoded into public/Projects/web — see
+// media-src/README.md for the sources and the ffmpeg recipe. `video` is the
+// full clip the drag-cards stage plays; `coverVideo` is the same reel cut to
+// its first 15s, which is what the project deck uses as a card cover.
+//
+// `repo` and `demo` are what make the deck cards in section 3 clickable: paste
+// each project's GitHub URL into `repo`, and once you've copied that project's
+// build in with scripts/add-demo.mjs, uncomment its `demo`. Both are optional —
+// a card with neither just taps through to the gallery, as before.
 export const galleryItems: GalleryItem[] = [
-  { id: 'nova', src: 'https://picsum.photos/seed/g-nova/1280/720', alt: 'Nova Commerce storefront animation', label: 'Nova', blurb: "Headless storefront rebuilt for speed — checkout in three taps.", views: '32k', likes: '52' },
-  { id: 'atlas', src: 'https://picsum.photos/seed/g-atlas/1280/720', alt: 'Atlas CRM dashboard walkthrough', label: 'Atlas', blurb: "Internal CRM shaped around how the sales team actually works.", views: '18k', likes: '41' },
-  { id: 'forge', src: 'https://picsum.photos/seed/g-forge/1280/720', alt: 'Forge Studio brand site motion reel', label: 'Forge', blurb: "Brand system and motion reel for a studio that hates templates.", views: '27k', likes: '63' },
-  { id: 'pulse', src: 'https://picsum.photos/seed/g-pulse/1280/720', alt: 'Pulse Analytics data views', label: 'Pulse', blurb: "Analytics dashboard that makes a week of data readable at once.", views: '21k', likes: '38' },
-  { id: 'drift', src: 'https://picsum.photos/seed/g-drift/1280/720', alt: 'Driftware marketing site scroll', label: 'Drift', blurb: "Marketing site with scroll storytelling and sub-second loads.", views: '15k', likes: '29' },
-  { id: 'rossi', src: 'https://picsum.photos/seed/g-rossi/1280/720', alt: 'Studio Rossi portfolio interactions', label: 'Rossi', blurb: "Portfolio with tactile interactions and an editorial backbone.", views: '24k', likes: '47' },
-  { id: 'vanta', src: 'https://picsum.photos/seed/g-vanta/1280/720', alt: 'Vanta landing page motion design', label: 'Vanta', blurb: "Landing page built to convert — one idea, one call to action.", views: '19k', likes: '35' },
-  { id: 'ember', src: 'https://picsum.photos/seed/g-ember/1280/720', alt: 'Ember booking flow walkthrough', label: 'Ember', blurb: "Booking flow rebuilt from scratch; drop-off cut by half.", views: '12k', likes: '26' },
-  { id: 'halo', src: 'https://picsum.photos/seed/g-halo/1280/720', alt: 'Halo SaaS dashboard tour', label: 'Halo', blurb: "SaaS product tour that explains the whole thing in one scroll.", views: '29k', likes: '58' },
-  { id: 'orbit', src: 'https://picsum.photos/seed/g-orbit/1280/720', alt: 'Orbit product site scroll animations', label: 'Orbit', blurb: "Product site where every scroll frame earns its place.", views: '16k', likes: '31' },
-]
-
-export const projects: Project[] = [
   {
-    id: 'nova-commerce',
-    name: 'Nova Commerce',
-    tags: ['E-commerce', 'UI Design', 'Webflow'],
+    id: 'nova',
+    src: '/Projects/web/1.jpg',
+    video: '/Projects/web/1.mp4',
+    coverVideo: '/Projects/web/1-cover.mp4',
+    alt: 'Lumora studio site — scroll-revealed sections',
+    label: 'Lumora',
+    name: 'Lumora Studio',
     year: '2025',
-    href: '#',
-    src: 'https://picsum.photos/seed/nova-commerce/900/1200',
-    alt: 'Nova Commerce storefront',
+    blurb: "Independent design and engineering studio — brands, products, and the systems that connect them.",
+    views: '32k',
+    likes: '52',
+    repo: 'https://github.com/Mrpatra013/UI-1',
+    demo: '/demos/nova/',
   },
   {
-    id: 'atlas-crm',
-    name: 'Atlas CRM',
-    tags: ['Custom CRM', 'React', 'Dashboard'],
+    id: 'atlas',
+    src: '/Projects/web/2.jpg',
+    video: '/Projects/web/2.mp4',
+    coverVideo: '/Projects/web/2-cover.mp4',
+    alt: 'SkyElite private jet charter site — parallax video hero',
+    label: 'SkyElite',
+    name: 'SkyElite',
     year: '2025',
-    href: '#',
-    src: 'https://picsum.photos/seed/atlas-crm/900/1200',
-    alt: 'Atlas CRM dashboard',
+    blurb: "Private jet charter sold on plain terms: fixed hourly rates, full fleet access, guaranteed aircraft in 8h.",
+    views: '18k',
+    likes: '41',
+    repo: 'https://github.com/Mrpatra013/UI-2',
+    demo: '/demos/atlas/',
   },
   {
-    id: 'forge-studio',
-    name: 'Forge Studio',
-    tags: ['Branding', 'Website', 'Motion'],
+    id: 'forge',
+    src: '/Projects/web/3.jpg',
+    video: '/Projects/web/3.mp4',
+    coverVideo: '/Projects/web/3-cover.mp4',
+    alt: 'Baseline tennis club site — programmes and facilities',
+    label: 'Baseline',
+    name: 'Baseline',
     year: '2024',
-    href: '#',
-    src: 'https://picsum.photos/seed/forge-studio/900/1200',
-    alt: 'Forge Studio brand site',
+    blurb: "Members' tennis club and academy — programmes, facilities and coaching, with the pro-shop drops alongside.",
+    views: '27k',
+    likes: '63',
+    repo: 'https://github.com/Mrpatra013/UI-3',
+    demo: '/demos/forge/',
   },
   {
-    id: 'pulse-analytics',
-    name: 'Pulse Analytics',
-    tags: ['SaaS', 'UI/UX', 'SEO'],
+    id: 'pulse',
+    src: '/Projects/web/4.jpg',
+    video: '/Projects/web/4.mp4',
+    coverVideo: '/Projects/web/4-cover.mp4',
+    alt: 'AI platform landing page — WebGL field and bento grid',
+    label: 'Reason',
+    name: 'Built To Reason',
     year: '2024',
-    href: '#',
-    src: 'https://picsum.photos/seed/pulse-analytics/900/1200',
-    alt: 'Pulse Analytics product site',
+    blurb: "AI platform landing page: five composable layers, a bento capability grid, and a WebGL neural field behind the type.",
+    views: '21k',
+    likes: '38',
+    repo: 'https://github.com/Mrpatra013/UI-12',
+    demo: '/demos/pulse/',
+  },
+  {
+    id: 'drift',
+    src: '/Projects/web/5.jpg',
+    video: '/Projects/web/5.mp4',
+    coverVideo: '/Projects/web/5-cover.mp4',
+    alt: 'Lumora Focus landing page — crossfading ambient films',
+    label: 'Lumora Focus',
+    name: 'Lumora Focus',
+    blurb: "Focus-app landing where four ambient films crossfade behind the hero, and the type flips ink colour to stay legible.",
+    views: '15k',
+    likes: '29',
+    repo: 'https://github.com/Mrpatra013/UI-5',
+    demo: '/demos/drift/',
+  },
+  {
+    id: 'rossi',
+    src: '/Projects/web/6.jpg',
+    video: '/Projects/web/6.mp4',
+    coverVideo: '/Projects/web/6-cover.mp4',
+    alt: 'prmpt archive collection — scroll-scrubbed video canvas',
+    label: 'prmpt',
+    name: 'prmpt',
+    blurb: "Archive collection release — a scroll-scrubbed video canvas, custom cursor, and product type in blend-mode exclusion.",
+    views: '24k',
+    likes: '47',
+    repo: 'https://github.com/Mrpatra013/UI-6',
+    demo: '/demos/rossi/',
+  },
+  {
+    id: 'vanta',
+    src: '/Projects/web/7.jpg',
+    video: '/Projects/web/7.mp4',
+    coverVideo: '/Projects/web/7-cover.mp4',
+    alt: 'securify data-privacy landing page — full-bleed video hero',
+    label: 'securify',
+    name: 'securify',
+    blurb: "Data-privacy product landing: full-bleed video under three lines of display type, with usage stats floating over it.",
+    views: '19k',
+    likes: '35',
+    repo: 'https://github.com/Mrpatra013/UI-7',
+    demo: '/demos/vanta/',
+  },
+  {
+    id: 'ember',
+    src: '/Projects/web/8.jpg',
+    video: '/Projects/web/8.mp4',
+    coverVideo: '/Projects/web/8-cover.mp4',
+    alt: 'Nora Kessler portfolio — cursor spotlight reveal',
+    label: 'Nora Kessler',
+    name: 'Nora Kessler',
+    blurb: "Motion designer's portfolio — a splash intro, a cursor spotlight revealing a second hero, then work, about and journal.",
+    views: '12k',
+    likes: '26',
+    repo: 'https://github.com/Mrpatra013/UI-8',
+    demo: '/demos/ember/',
+  },
+  {
+    id: 'halo',
+    src: '/Projects/web/9.jpg',
+    video: '/Projects/web/9.mp4',
+    coverVideo: '/Projects/web/9-cover.mp4',
+    alt: 'NeuralKinetics bionics site — dark sectioned scroll',
+    label: 'NeuralKinetics',
+    name: 'NeuralKinetics',
+    blurb: "Neurotech landing page for advanced bionics and cognitive AI, pitched across a dark sectioned scroll.",
+    views: '29k',
+    likes: '58',
+    repo: 'https://github.com/Mrpatra013/UI-9',
+    demo: '/demos/halo/',
+  },
+  {
+    id: 'orbit',
+    src: '/Projects/web/10.jpg',
+    video: '/Projects/web/10.mp4',
+    coverVideo: '/Projects/web/10-cover.mp4',
+    alt: 'LGPSM fashion storefront — wireframe globe and cart drawer',
+    label: 'LGPSM',
+    name: 'LGPSM',
+    blurb: "Fashion editorial storefront with a wireframe globe, marquee dispatches and a working cart drawer at checkout.",
+    views: '16k',
+    likes: '31',
+    repo: 'https://github.com/Mrpatra013/UI-10',
+    demo: '/demos/orbit/',
   },
 ]
 

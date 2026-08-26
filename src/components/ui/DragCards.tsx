@@ -4,10 +4,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent, ReactNode } from 'react'
 import gsap from 'gsap'
+import CoverMedia from './CoverMedia'
 
 export interface DragCardItem {
   id: string
+  /** Poster still, shown until the clip decodes and if it never does. */
   src: string
+  /** Web-encoded reel that plays on the card face. */
+  video?: string
   alt: string
   title: string
   subtitle?: string
@@ -34,7 +38,6 @@ interface DraggableCardProps {
 function DraggableCard({ item, layout, zIndex, resetToken, containerRef, onBringToFront }: DraggableCardProps) {
   const [position, setPosition] = useState({ x: layout.x, y: layout.y })
   const [dragging, setDragging] = useState(false)
-  const [imgFailed, setImgFailed] = useState(false)
   const cardRef = useRef<HTMLDivElement>(null)
   const dragOffset = useRef({ x: 0, y: 0 })
 
@@ -93,23 +96,14 @@ function DraggableCard({ item, layout, zIndex, resetToken, containerRef, onBring
         transform: `translate3d(var(--enter-x, 0px), 0, 0) rotate(${dragging ? 0 : layout.rotation}deg)`,
       }}
     >
-      <div className="pointer-events-none relative aspect-video overflow-hidden rounded-xl bg-[#141414]">
-        {!imgFailed ? (
-          <img
-            src={item.src}
-            alt={item.alt}
-            draggable={false}
-            loading="lazy"
-            decoding="async"
-            onError={() => setImgFailed(true)}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#1c1c1c] via-[#242424] to-[#0f0f0f]">
-            <span className="text-3xl font-black uppercase tracking-tight text-white/10">{item.title.split(' ')[0]}</span>
-          </div>
-        )}
-      </div>
+      <CoverMedia
+        video={item.video}
+        poster={item.src}
+        alt={item.alt}
+        label={item.title}
+        className="rounded-xl"
+        labelClassName="text-3xl"
+      />
       <div className="mt-1.5 flex items-center justify-between gap-2 px-1.5 pb-0.5">
         <div className="min-w-0">
           <h3 className="truncate text-sm font-black uppercase leading-tight tracking-tight text-[#111] md:text-base">

@@ -1,7 +1,13 @@
+import { scrollToSection } from "../lib/scrollLock";
+
 export default function CTAButton() {
   return (
     <button
       type="button"
+      // Jumps to the footer's contact card. scrollToSection (not a plain
+      // anchor) because every section is wrapped in a sticky layer that hides
+      // its real document position from the browser's own hash scrolling.
+      onClick={() => scrollToSection("#contact")}
       className="group relative flex cursor-pointer items-center gap-3 overflow-hidden rounded-full border-0 bg-transparent p-2"
     >
       <span

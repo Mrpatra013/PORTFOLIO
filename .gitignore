@@ -1,1 +1,5 @@
 .claude/settings.local.json
+
+# Camera-native project reels (~670MB). Only the web encodes in
+# public/Projects/web are committed — see media-src/README.md to rebuild them.
+media-src/

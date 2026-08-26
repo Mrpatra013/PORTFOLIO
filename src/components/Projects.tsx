@@ -1,31 +1,14 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import HoverDeck from './ui/HoverDeck'
 import StickerDrag from './ui/StickerDrag'
 import type { DeckItem } from './ui/HoverDeck'
 import { EASE, revealProps } from '../lib/motion'
 import { scrollToSection } from '../lib/scrollLock'
-import { galleryItems, projects, stickers } from '../data/site'
+import { useAvailableDemos } from '../lib/useDemos'
+import { galleryItems, stickers } from '../data/site'
 
 const scrollToGallery = () => scrollToSection('#gallery')
-
-// The 4 real projects contribute their live link + year (matched by id
-// prefix: 'nova' → 'nova-commerce'); the rest tap through to the gallery.
-const deckItems: DeckItem[] = galleryItems.map(({ id, src, alt, label, blurb, views, likes }) => {
-  const project = projects.find((p) => p.id.startsWith(id))
-  return {
-    id,
-    src,
-    alt,
-    title: project?.name ?? label,
-    blurb,
-    views,
-    likes,
-    year: project?.year,
-    href: project?.href,
-    onSelect: scrollToGallery,
-  }
-})
 
 // Hand-placed arrangement, transcribed from a 1456x803 reference layout and
 // stored as percentages of the section so the composition survives any window
@@ -67,6 +50,29 @@ export default function Projects() {
   // visitor actually picks a sticker up.
   const [grabbed, setGrabbed] = useState(false)
 
+  // A card only gets a demo link once the manifest confirms that build is
+  // really in public/demos — a `demo` path in site.ts on its own is just a
+  // declaration, and would otherwise open an empty page.
+  const availableDemos = useAvailableDemos()
+  const deckItems = useMemo<DeckItem[]>(
+    () =>
+      galleryItems.map((item) => ({
+        id: item.id,
+        src: item.src,
+        video: item.coverVideo,
+        alt: item.alt,
+        title: item.name ?? item.label,
+        blurb: item.blurb,
+        views: item.views,
+        likes: item.likes,
+        year: item.year,
+        repo: item.repo || undefined,
+        demo: item.demo && availableDemos.has(item.id) ? item.demo : undefined,
+        onSelect: scrollToGallery,
+      })),
+    [availableDemos],
+  )
+
   return (
     <section
       id="work"
@@ -106,7 +112,7 @@ export default function Projects() {
           {...revealProps}
           className="text-[11px] font-bold uppercase tracking-[0.1em] text-[#4a4a4a]"
         >
-          Every card below opens its live project
+          Open the local build — or read the code
         </motion.p>
         <motion.h2
           {...revealProps}

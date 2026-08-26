@@ -11,8 +11,11 @@ export default function Hero() {
     <section className="relative h-full w-full overflow-hidden bg-black">
       <LiquidReveal />
       <motion.a
-        href="/"
-        aria-label="Home"
+        // "#top" rather than "/": the delegated smooth-scroll handler in
+        // useSmoothAnchors turns this into a glide back to the hero instead of
+        // a full page reload (which would replay the intro loader).
+        href="#top"
+        aria-label="Back to top"
         initial={{ opacity: 0, y: -16 }}
         animate={ready ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}

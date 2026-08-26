@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "demos:add": "node scripts/add-demo.mjs",
+    "demos:sync": "node scripts/add-demo.mjs --sync"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -6,6 +6,19 @@ import { contactEmail, stickers } from '../data/site'
 import StickerDrag from './ui/StickerDrag'
 
 gsap.registerPlugin(ScrollTrigger)
+
+/**
+ * Where the form posts. FormSubmit relays the submission straight to
+ * `contactEmail`, which keeps this a fully static site (no server of our own).
+ * Override with VITE_CONTACT_ENDPOINT in .env to point at any endpoint that
+ * accepts a JSON POST — e.g. a Formspree form or your own API.
+ *
+ * NOTE: FormSubmit sends a one-time activation email to `contactEmail` the
+ * first time the form is submitted; the link in it has to be clicked once
+ * before submissions start arriving.
+ */
+const formEndpoint =
+  import.meta.env.VITE_CONTACT_ENDPOINT ?? `https://formsubmit.co/ajax/${contactEmail}`
 
 // 5.png is reserved for this card — it is the one sticker the Projects
 // collage never lays out, so it only ever appears here.
@@ -19,6 +32,7 @@ const cardSticker = stickers.find((s) => s.id === 'tentacle')
  */
 export default function ContactCard() {
   const cardRef = useRef<HTMLElement>(null)
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
   useLayoutEffect(() => {
     const el = cardRef.current
@@ -49,14 +63,46 @@ export default function ContactCard() {
     return () => ctx.revert()
   }, [])
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const data = new FormData(e.currentTarget)
+    if (status === 'sending') return
+
+    const form = e.currentTarget
+    const data = new FormData(form)
     const name = String(data.get('name') ?? '')
     const email = String(data.get('email') ?? '')
-    const subject = encodeURIComponent(`Just saying hello — ${name}`)
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\nHi, I'd like to talk about a project.`)
-    window.location.href = `mailto:${contactEmail}?subject=${subject}&body=${body}`
+    // Bots fill every field they find; a human never sees this one.
+    if (data.get('_honey')) return
+
+    setStatus('sending')
+    try {
+      const res = await fetch(formEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          // Replies from the inbox go straight back to whoever wrote in.
+          _replyto: email,
+          _subject: `New enquiry from ${name} — TheDesk`,
+          _template: 'table',
+          _captcha: 'false',
+          message: `${name} (${email}) would like to talk about a project.`,
+        }),
+      })
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`)
+      setStatus('sent')
+      form.reset()
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  // Fallback for a failed send: opens the visitor's mail client, pre-filled.
+  const mailtoHref = () => {
+    const subject = encodeURIComponent('New enquiry — TheDesk')
+    const body = encodeURIComponent("Hi, I'd like to talk about a project.")
+    return `mailto:${contactEmail}?subject=${subject}&body=${body}`
   }
 
   return (
@@ -99,12 +145,37 @@ export default function ContactCard() {
               />
             </label>
 
+            {/* Honeypot — hidden from people, irresistible to bots. */}
+            <input
+              type="text"
+              name="_honey"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="hidden"
+            />
+
             <button
               type="submit"
-              className="mt-9 w-full cursor-pointer rounded-full border-0 bg-[#111111] py-4 text-base font-semibold text-white transition-transform duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+              disabled={status === 'sending'}
+              className="mt-9 w-full cursor-pointer rounded-full border-0 bg-[#111111] py-4 text-base font-semibold text-white transition-transform duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black disabled:cursor-wait disabled:opacity-70 disabled:hover:scale-100"
             >
-              Let`s figure it out!
+              {status === 'sending' ? 'Sending…' : 'Let`s figure it out!'}
             </button>
+
+            {/* aria-live so the outcome is announced, not just shown. */}
+            <p aria-live="polite" className="mt-4 min-h-[1.5rem] text-sm font-medium text-[#161616]">
+              {status === 'sent' && "Thanks — your message is on its way. We'll be in touch shortly."}
+              {status === 'error' && (
+                <>
+                  Something went wrong sending that.{' '}
+                  <a href={mailtoHref()} className="underline underline-offset-2">
+                    Email us directly
+                  </a>
+                  .
+                </>
+              )}
+            </p>
           </form>
         </div>
 
