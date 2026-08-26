@@ -1,5 +1,26 @@
+# Dependencies — never commit these. The tree that was here carried
+# @esbuild/darwin-arm64 and @rollup/rollup-darwin-arm64, which is exactly
+# what makes a Linux CI build fail with "you installed esbuild for another
+# platform". package-lock.json is the reproducible source of truth.
+node_modules/
+
+# Build output — Vercel runs `npm run build` itself on every deploy.
+dist/
+tsconfig.tsbuildinfo
+
+# Local tooling
 .claude/settings.local.json
+.vercel
+
+# macOS
+.DS_Store
 
 # Camera-native project reels (~670MB). Only the web encodes in
 # public/Projects/web are committed — see media-src/README.md to rebuild them.
 media-src/
+
+# Full-res screenshot masters for the hero reveal. The web encodes that
+# actually ship are public/hero/before.jpg and after.jpg — these 11.8MB
+# PNGs were never referenced by any code, only bloating the clone.
+/before.png
+/after.png
