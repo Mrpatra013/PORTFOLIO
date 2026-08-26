@@ -105,33 +105,38 @@ export const projects: Project[] = [
 export const services: Service[] = [
   {
     id: '01',
-    title: 'Website Development',
-    blurb: "Fast, responsive, pixel-perfect builds that don't flinch on any device.",
+    title: 'Ecommerce + Admin CRM',
+    blurb: 'A storefront that sells around the clock, with one panel for orders, inventory and customers.',
   },
   {
     id: '02',
-    title: 'Modern UI Design',
-    blurb: 'Interfaces with a point of view. Bold type, sharp motion, zero clutter.',
+    title: 'Custom Websites',
+    blurb: 'We can build custom websites in that way you dont really think of .Your personality shines through your website.',
   },
   {
     id: '03',
-    title: 'Customized CRM & Tools',
-    blurb: 'Internal tools shaped around how your team actually works.',
+    title: 'Tech Solutions ',
+    blurb: 'We love building softweare that solve specific problems and helpbusinesses work smarter.',
   },
   {
     id: '04',
-    title: 'SEO-Optimized Code',
-    blurb: 'Clean, semantic, lighthouse-green code that search engines love.',
+    title: 'Modern UI/UX Design',
+    blurb: 'Built around how people actually browse and buy — not just how it looks.',
   },
   {
     id: '05',
-    title: 'Performance & Speed',
-    blurb: 'Sub-second loads and rankings that climb. Speed is a feature.',
+    title: 'Ratings & Reviews',
+    blurb: 'Real reviews on every product, so the next buyer sees proof before they hesitate.',
   },
   {
     id: '06',
-    title: 'Ongoing Support',
-    blurb: "We don't ship and vanish. We iterate, maintain, and improve.",
+    title: 'High-Conversion UI',
+    blurb: 'CTAs, layout and checkout tuned step by step until the drop-off stops.',
+  },
+  {
+    id: '07',
+    title: 'Customizable Tools',
+    blurb: 'Booking systems, dashboards, calculators — shaped to your sales process, not a template.',
   },
 ]
 

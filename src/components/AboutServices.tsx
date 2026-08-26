@@ -13,8 +13,9 @@ export default function AboutServices() {
         transition={{ ...revealProps.transition, delay: 0.15 }}
         className="mt-6 max-w-xl text-base text-white/70 md:text-lg"
       >
-        We're a small studio with a simple rule: everything we ship has to earn
-        its place. Design that converts, code that flies, tools that fit.
+        We build the systems that turn traffic into customers and leads into
+        revenue — ecommerce sites with built-in CRM, digital catalogs, and
+        ordering flows for brands across India and abroad.
       </motion.p>
 
       <ul className="mt-14 border-t border-white/10 md:mt-20">

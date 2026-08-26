@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { useIntroReady } from "../lib/introReady";
 
-const TAGS = ["Branding", "Optimized Code", "Modern UI", "Web Development"];
+const TAGS = ["Branding", "Tech Solutions", "Modern UI", "Web Development"];
 
 function CountUp({
   end,

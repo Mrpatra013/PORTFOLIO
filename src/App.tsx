@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
 import Lenis from 'lenis'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MotionConfig } from 'framer-motion'
 import Hero from './components/Hero'
 import MenuCapsule from './components/MenuCapsule'
@@ -17,6 +19,11 @@ export default function App() {
   useEffect(() => {
     const lenis = new Lenis()
     setLenisInstance(lenis)
+
+    // Lenis drives scrolling itself, so ScrollTrigger has to be updated from
+    // its ticks rather than trailing native scroll events by a frame.
+    gsap.registerPlugin(ScrollTrigger)
+    lenis.on('scroll', ScrollTrigger.update)
 
     let frameId = requestAnimationFrame(function raf(time) {
       lenis.raf(time)

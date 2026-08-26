@@ -3,6 +3,7 @@
 // with pointer events and restyled to the TheDesk brand.
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent, ReactNode } from 'react'
+import gsap from 'gsap'
 
 export interface DragCardItem {
   id: string
@@ -17,6 +18,8 @@ interface CardLayout {
   x: number
   y: number
   rotation: number
+  /** Which edge this card flies in from on the intro: -1 left, 1 right. */
+  enterFrom: -1 | 1
 }
 
 interface DraggableCardProps {
@@ -71,6 +74,7 @@ function DraggableCard({ item, layout, zIndex, resetToken, containerRef, onBring
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
+      data-drag-card=""
       className={`absolute w-64 select-none rounded-2xl bg-white p-1.5 pb-2 md:w-80 ${
         dragging
           ? 'cursor-grabbing shadow-[0_30px_70px_rgba(0,0,0,0.5)]'
@@ -81,7 +85,12 @@ function DraggableCard({ item, layout, zIndex, resetToken, containerRef, onBring
         top: `${position.y}px`,
         zIndex,
         touchAction: 'none',
-        transform: `rotate(${dragging ? 0 : layout.rotation}deg)`,
+        // `--enter-x` is owned by the GSAP intro (see the effect below) and
+        // left at its 0px default afterwards. Keeping the entrance offset in a
+        // custom property rather than in this string is what lets GSAP and
+        // React write to the same element without overwriting each other:
+        // React only ever rewrites the keys in this object.
+        transform: `translate3d(var(--enter-x, 0px), 0, 0) rotate(${dragging ? 0 : layout.rotation}deg)`,
       }}
     >
       <div className="pointer-events-none relative aspect-video overflow-hidden rounded-xl bg-[#141414]">
@@ -183,17 +192,22 @@ export default function DragCards({ items, center, className = '' }: DragCardsPr
         const onLeft = compact ? true : i < perSide
         const row = onLeft ? i : i - perSide
         const rotation = rots[i % rots.length]
+        // Desktop cards fly in from the side they settle on. The compact stack
+        // is centred, so there is no settled side to match — alternate instead,
+        // which reads as the same two-sided deal.
+        const enterFrom: -1 | 1 = compact ? (i % 2 === 0 ? -1 : 1) : onLeft ? -1 : 1
         if (compact) {
           // one centred, heavily overlapped stack with a slight sway
           const sway = (i % 2 === 0 ? -1 : 1) * w * 0.03
           const x = Math.max(0, Math.min((w - cardW) / 2 + sway, w - cardW))
-          return { x, y: 12 + row * step, rotation }
+          return { x, y: 12 + row * step, rotation, enterFrom }
         }
         const j = w * jitter[row % jitter.length]
         return {
           x: onLeft ? j : Math.max(0, w - cardW - j),
           y: 12 + row * step,
           rotation,
+          enterFrom,
         }
       })
       setLayouts(next)
@@ -208,6 +222,65 @@ export default function DragCards({ items, center, className = '' }: DragCardsPr
   useEffect(() => {
     setZIndices(baseZIndices())
   }, [baseZIndices])
+
+  // --- GSAP intro: the cards are dealt in from the two side edges ----------
+  // Runs once, when the stage first scrolls into view. The offset lives in the
+  // `--enter-x` custom property so it composes with the rotation React writes
+  // into `transform` instead of fighting it.
+  const introPlayed = useRef(false)
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container || introPlayed.current) return
+    if (layouts.length !== items.length) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const cards = Array.from(container.querySelectorAll<HTMLElement>('[data-drag-card]'))
+    if (cards.length !== layouts.length) return
+
+    // Park them off-stage straight away, before the observer fires, so they are
+    // never briefly visible in their final spots.
+    cards.forEach((card, i) => {
+      // The resting transition would interpolate the entrance offset too and
+      // smear the tween; GSAP drives every frame here.
+      card.style.transition = 'none'
+      card.style.opacity = '0'
+      card.style.setProperty('--enter-x', `${layouts[i].enterFrom * (container.offsetWidth * 0.6 + 360)}px`)
+    })
+
+    const settle = () => {
+      cards.forEach((card) => {
+        card.style.removeProperty('transition')
+        card.style.removeProperty('--enter-x')
+      })
+    }
+
+    let tween: gsap.core.Tween | null = null
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting || introPlayed.current) return
+        introPlayed.current = true
+        observer.disconnect()
+        tween = gsap.to(cards, {
+          '--enter-x': '0px',
+          opacity: 1,
+          duration: 1.05,
+          ease: 'power3.out',
+          // Outermost pair first, working inwards, so the two streams read as
+          // one gesture rather than ten separate cards.
+          stagger: { each: 0.07, from: 'edges' },
+          onComplete: settle,
+        })
+      },
+      { threshold: 0.3 },
+    )
+    observer.observe(container)
+
+    return () => {
+      observer.disconnect()
+      tween?.kill()
+      settle()
+    }
+  }, [layouts, items.length])
 
   const bringToFront = (index: number) => {
     setZIndices((prev) => {
