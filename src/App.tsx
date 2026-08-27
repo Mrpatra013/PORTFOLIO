@@ -11,6 +11,7 @@ import Projects from './components/Projects'
 import AboutServices from './components/AboutServices'
 import Testimonials from './components/Testimonials'
 import Footer from './components/Footer'
+import MobileGate, { useMobileGate } from './components/MobileGate'
 import StickySection from './components/StickySection'
 import { IntroReadyProvider } from './lib/introReady'
 import { setLenisInstance } from './lib/scrollLock'
@@ -53,7 +54,14 @@ function Page() {
 }
 
 export default function App() {
+  // Below the desktop breakpoint the site is replaced by a notice rather than
+  // rendered underneath one: none of the scroll machinery below (Lenis,
+  // ScrollTrigger, the three.js hero) should spin up for a visitor who isn't
+  // going to see it.
+  const { blocked, dismiss } = useMobileGate()
+
   useEffect(() => {
+    if (blocked) return
     const lenis = new Lenis()
     setLenisInstance(lenis)
 
@@ -72,7 +80,15 @@ export default function App() {
       lenis.destroy()
       setLenisInstance(null)
     }
-  }, [])
+  }, [blocked])
+
+  if (blocked) {
+    return (
+      <MotionConfig reducedMotion="user">
+        <MobileGate onContinue={dismiss} />
+      </MotionConfig>
+    )
+  }
 
   return (
     <MotionConfig reducedMotion="user">
