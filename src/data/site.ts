@@ -31,10 +31,27 @@ export interface GalleryItem {
   demo?: string
 }
 
+export interface ServiceGroup {
+  heading: string
+  items: string[]
+  /** Muted styling — for "not included" style lists. */
+  muted?: boolean
+}
+
 export interface Service {
   id: string
   title: string
+  /** Short outcome label shown above the title, e.g. "Sell more". */
+  tag: string
   blurb: string
+  /** Everything below is revealed when the row is expanded. */
+  details: {
+    intro: string
+    meta: { label: string; value: string }[]
+    groups: ServiceGroup[]
+    bestFor: string
+    note?: string
+  }
 }
 
 export interface Testimonial {
@@ -215,38 +232,222 @@ export const galleryItems: GalleryItem[] = [
 export const services: Service[] = [
   {
     id: '01',
-    title: 'Ecommerce + Admin CRM',
-    blurb: 'A storefront that sells around the clock, with one panel for orders, inventory and customers.',
+    title: 'Sales Leak Audit',
+    tag: 'The way in',
+    blurb: 'A recorded video review showing exactly where your website loses customers, and what to fix first.',
+    details: {
+      intro:
+        'Every engagement starts here. I go through your website and the way you handle leads on a screen recording, so you can see exactly where customers slip away.',
+      meta: [
+        { label: 'Delivered in', value: '48 hours' },
+        { label: 'Format', value: 'Video review' },
+      ],
+      groups: [
+        {
+          heading: 'What I review',
+          items: [
+            'Capture: does a visitor have a reason to leave their details?',
+            'Respond: how fast does an enquiry get an answer?',
+            'Follow up: what happens to people who don’t buy?',
+            'Return: are past customers ever invited back?',
+            'Speed and mobile: does the site load fast and work on a phone?',
+          ],
+        },
+        {
+          heading: 'What you get',
+          items: [
+            'A 10 to 15 minute screen-recorded walkthrough of your site',
+            'Your biggest leaks, ranked by impact',
+            'Three fixes you can make yourself this week',
+            'A recommendation for which service fits, if any',
+          ],
+        },
+      ],
+      bestFor: 'Anyone who wants to know where their website is losing customers and time.',
+      note: 'Send your website link by email or DM, or comment SYSTEM on any of my reels. No call needed.',
+    },
   },
   {
     id: '02',
-    title: 'Custom Websites',
-    blurb: 'We can build custom websites in that way you dont really think of .Your personality shines through your website.',
+    title: 'Sales System Starter',
+    tag: 'Get seen',
+    blurb: 'A fast website that captures every lead, replies instantly and reminds the people who didn’t buy.',
+    details: {
+      intro:
+        'A website that doesn’t just sit there. It catches every enquiry, answers it in seconds and follows up on its own. The fastest way to stop losing customers.',
+      meta: [
+        { label: 'Live in', value: '14 days' },
+        { label: 'Support', value: '30 days' },
+      ],
+      groups: [
+        {
+          heading: 'What’s included',
+          items: [
+            'Website of up to 5 pages, mobile-first and fast',
+            'Copy structure built around one clear offer',
+            'Capture: enquiry or booking form, plus click-to-chat',
+            'Respond: instant automated reply by email or WhatsApp',
+            'Follow up: automatic reminder for leads who didn’t buy',
+            'Every lead sent straight to your inbox or phone',
+            'Basic analytics so you can see what’s working',
+            'Walkthrough video and 30 days of support',
+          ],
+        },
+        {
+          heading: 'Not included',
+          muted: true,
+          items: [
+            'The Return job (reorder and win-back flows)',
+            'Online store or product catalogue',
+            'Pages beyond five',
+            'Custom apps or internal tools',
+          ],
+        },
+      ],
+      bestFor:
+        'Cafes, local real estate agents, service businesses and new brands that need a site that works from day one.',
+      note: 'Upgrade to the Full Sales System anytime. Nothing you’ve built is wasted.',
+    },
   },
   {
     id: '03',
-    title: 'Tech Solutions ',
-    blurb: 'We love building softweare that solve specific problems and helpbusinesses work smarter.',
+    title: 'Full Sales System',
+    tag: 'Sell more',
+    blurb: 'A website or store with all four jobs built in: capture, respond, follow up and bring buyers back.',
+    details: {
+      intro:
+        'The complete system. Visitors become buyers, and buyers keep coming back, without you chasing every one of them by hand.',
+      meta: [
+        { label: 'Live in', value: '3 to 4 weeks' },
+        { label: 'Support', value: '60 days' },
+      ],
+      groups: [
+        {
+          heading: 'The four jobs',
+          items: [
+            'Capture: lead magnets, first-order offers, smart forms, pop-ups and click-to-chat on every key page',
+            'Respond: instant replies by email and WhatsApp, booking confirmations and answers to common questions',
+            'Follow up: multi-step email sequences, abandoned enquiry and cart reminders, and check-ins that bring back the maybes',
+            'Return: thank-you flows, review requests, reorder reminders and win-back offers for past customers',
+          ],
+        },
+        {
+          heading: 'Also included',
+          items: [
+            'Website or store of up to 10 pages',
+            'A simple lead dashboard or CRM setup',
+            'Analytics and conversion tracking',
+            'Walkthrough videos for you and your team',
+            '60 days of support after launch',
+            'First month of Growth Care included',
+          ],
+        },
+      ],
+      bestFor:
+        'Online product brands, real estate teams and businesses ready to turn their site into a full sales engine.',
+    },
   },
   {
     id: '04',
-    title: 'Modern UI/UX Design',
-    blurb: 'Built around how people actually browse and buy — not just how it looks.',
+    title: 'Business Automation',
+    tag: 'Work less',
+    blurb: 'Custom tools and workflows that take the repetitive work off your team’s plate.',
+    details: {
+      intro:
+        'Custom software that handles the repetitive work inside your business, built around how your team already works rather than forcing a new process on them.',
+      meta: [
+        { label: 'Timeline', value: '2 to 4 weeks' },
+        { label: 'Built around', value: 'Your workflow' },
+      ],
+      groups: [
+        {
+          heading: 'What I build',
+          items: [
+            'Internal dashboards for your team',
+            'Order and inventory tracking',
+            'Automatic reports, delivered on schedule',
+            'Client onboarding flows',
+            'Lead routing to the right person, instantly',
+          ],
+        },
+        {
+          heading: 'Tools I connect',
+          items: [
+            'Forms and spreadsheets',
+            'Your CRM',
+            'Email and messaging',
+            'Payments',
+            'AI and workflow automation where it saves real hours',
+          ],
+        },
+      ],
+      bestFor:
+        'Teams losing hours to manual work, spreadsheets and copy-paste. Agencies that want onboarding and proposals on autopilot.',
+    },
   },
   {
     id: '05',
-    title: 'Ratings & Reviews',
-    blurb: 'Real reviews on every product, so the next buyer sees proof before they hesitate.',
+    title: 'Custom Web & Mobile Apps',
+    tag: 'Build the product',
+    blurb: 'Products, portals and platforms built from scratch, from a startup MVP to a customer portal.',
+    details: {
+      intro:
+        'When a website isn’t enough. I design and build full products, scoped together on a discovery call so you know exactly what you’re getting before work begins.',
+      meta: [
+        { label: 'Timeline', value: '4 to 10 weeks' },
+        { label: 'Stack', value: 'Next.js · React · Supabase' },
+      ],
+      groups: [
+        {
+          heading: 'What I build',
+          items: [
+            'MVPs for startups ready to launch',
+            'Booking and ordering apps',
+            'Client portals',
+            'Membership platforms',
+            'Admin panels and internal dashboards',
+          ],
+        },
+        {
+          heading: 'How it works',
+          items: [
+            'Discovery call to agree goals and scope',
+            'Fixed scope and launch date in writing',
+            'Progress update every few days',
+            'Walkthrough video at launch',
+            'You own the code, data and logins',
+          ],
+        },
+      ],
+      bestFor:
+        'Startups that need a product shipped, and established businesses that need a portal or platform for their customers.',
+    },
   },
   {
     id: '06',
-    title: 'High-Conversion UI',
-    blurb: 'CTAs, layout and checkout tuned step by step until the drop-off stops.',
-  },
-  {
-    id: '07',
-    title: 'Customizable Tools',
-    blurb: 'Booking systems, dashboards, calculators — shaped to your sales process, not a template.',
+    title: 'Growth Care',
+    tag: 'Keep it working',
+    blurb: 'Your site and systems looked after and improved every month, so they keep working while you run the business.',
+    details: {
+      intro:
+        'Launch is the start, not the finish. Growth Care keeps everything running, monitored and getting better month after month.',
+      meta: [
+        { label: 'Billing', value: 'Monthly' },
+        { label: 'Notice', value: '30 days to cancel' },
+      ],
+      groups: [
+        {
+          heading: 'Every month',
+          items: [
+            'Hosting, updates and security',
+            'Monitoring every automation',
+            'Monthly improvements and tests',
+            'A short monthly report',
+          ],
+        },
+      ],
+      bestFor: 'Anyone who wants their site and systems running and improving without thinking about it.',
+    },
   },
 ]
 
