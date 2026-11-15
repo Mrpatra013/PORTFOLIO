@@ -25,7 +25,7 @@ export default function Testimonials() {
       <SectionHeading
         eyebrow="Client words"
         title="Don't take"
-        accent="Our word."
+        accent="My word."
         dark={false}
         className="text-center"
         // Trimmed from the default 5.5vw so both lines plus the deck of cards

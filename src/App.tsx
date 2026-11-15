@@ -6,7 +6,7 @@ import { MotionConfig } from 'framer-motion'
 import Hero from './components/Hero'
 import MenuCapsule from './components/MenuCapsule'
 import PageLoader from './components/PageLoader'
-import ProjectGallery from './components/ProjectGallery'
+import AboutMe from './components/AboutMe'
 import Projects from './components/Projects'
 import AboutServices from './components/AboutServices'
 import Testimonials from './components/Testimonials'
@@ -34,7 +34,7 @@ function Page() {
           </div>
         </StickySection>
         <StickySection zIndex={1}>
-          <ProjectGallery />
+          <AboutMe />
         </StickySection>
         <StickySection zIndex={2}>
           <Projects />
@@ -54,11 +54,11 @@ function Page() {
 }
 
 export default function App() {
-  // Below the desktop breakpoint the site is replaced by a notice rather than
-  // rendered underneath one: none of the scroll machinery below (Lenis,
-  // ScrollTrigger, the three.js hero) should spin up for a visitor who isn't
-  // going to see it.
-  const { blocked, dismiss } = useMobileGate()
+  // Below the desktop breakpoint only the hero renders, locked to the first
+  // screen, with a "built for the desktop" note in place of the CTA. The
+  // scroll machinery (Lenis, ScrollTrigger) and the sections below the fold
+  // never spin up there.
+  const { blocked } = useMobileGate()
 
   useEffect(() => {
     if (blocked) return
@@ -85,7 +85,7 @@ export default function App() {
   if (blocked) {
     return (
       <MotionConfig reducedMotion="user">
-        <MobileGate onContinue={dismiss} />
+        <MobileGate />
       </MotionConfig>
     )
   }

@@ -6,22 +6,21 @@ import { cn } from '../lib/utils'
 import { services } from '../data/site'
 import type { Service } from '../data/site'
 
-/** Section 3 — about + numbered service rows that expand into full details. */
+/** Section 4 — numbered service rows that expand into full details. */
 export default function AboutServices() {
   const [openId, setOpenId] = useState<string | null>(null)
 
   return (
-    <section id="about" aria-label="About and services" className="relative rounded-t-[2.5rem] bg-[#0a0a0a] px-5 py-24 shadow-[0_-32px_80px_rgba(0,0,0,0.45)] md:px-10 md:py-32">
-      <SectionHeading eyebrow="What we do" title="Built to" accent="Sell." />
+    <section id="services" aria-label="Services" className="relative rounded-t-[2.5rem] bg-[#0a0a0a] px-5 py-24 shadow-[0_-32px_80px_rgba(0,0,0,0.45)] md:px-10 md:py-32">
+      <SectionHeading eyebrow="What I do" title="Built to" accent="Sell." />
       <motion.p
         {...revealProps}
         transition={{ ...revealProps.transition, delay: 0.15 }}
         className="mt-6 max-w-2xl text-base text-white/70 md:text-lg"
       >
-        A website gets you seen. A system gets you sold. We build websites and
-        apps, the automation that makes daily work easier, and the sales systems
-        that capture, reply, follow up and bring buyers back, for brands, cafes,
-        real estate teams, startups and agencies worldwide.
+        Websites with a sales system built in. Every system does four jobs:
+        capture, respond, follow up and return. Start with the full thing, or
+        with the part where you're losing the most.
       </motion.p>
 
       <ul className="mt-14 border-t border-white/10 md:mt-20">

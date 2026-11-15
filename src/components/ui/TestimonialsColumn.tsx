@@ -1,5 +1,5 @@
 // Adapted from 21st.dev "Testimonials Columns" by sshahaider (component id 1965),
-// restyled to the TheDesk palette. The marquee runs as a CSS keyframe animation
+// restyled to the site palette. The marquee runs as a CSS keyframe animation
 // (see tailwind.config.js) so it can pause on hover via animation-play-state.
 import { Fragment } from 'react'
 import type { Testimonial } from '../../data/site'

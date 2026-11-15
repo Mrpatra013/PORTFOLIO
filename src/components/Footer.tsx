@@ -12,16 +12,16 @@ export default function Footer() {
           share the row. */}
       <div className="relative z-10 mt-[26rem] lg:mt-0">
       <motion.p {...revealProps} className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/60">
-        Got a project?
+        Your website gets you seen.
       </motion.p>
       <motion.h2
         {...revealProps}
         transition={{ ...revealProps.transition, delay: 0.1 }}
         className="mt-4 font-black uppercase leading-[1] tracking-tight text-white text-[11vw] sm:text-[7.5vw] lg:text-[5.5vw]"
       >
-        <span className="block">Don't settle</span>
+        <span className="block">Let's get</span>
         <span className="block">
-          For <span className="text-accent">Average.</span>
+          You <span className="text-accent">Sold.</span>
         </span>
       </motion.h2>
 

@@ -1,6 +1,6 @@
 // Adapted from 21st.dev "Drag cards" by minhxthanh (component id 4311):
 // free-drag cards with bring-to-front stacking, rewritten in strict TypeScript
-// with pointer events and restyled to the TheDesk brand.
+// with pointer events and restyled to the site brand.
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { PointerEvent as ReactPointerEvent, ReactNode } from 'react'
 import gsap from 'gsap'

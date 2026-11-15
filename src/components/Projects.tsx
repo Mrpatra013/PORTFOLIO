@@ -8,7 +8,7 @@ import { scrollToSection } from '../lib/scrollLock'
 import { useAvailableDemos } from '../lib/useDemos'
 import { galleryItems, stickers } from '../data/site'
 
-const scrollToGallery = () => scrollToSection('#gallery')
+const scrollToServices = () => scrollToSection('#services')
 
 // Hand-placed arrangement, transcribed from a 1456x803 reference layout and
 // stored as percentages of the section so the composition survives any window
@@ -68,7 +68,7 @@ export default function Projects() {
         year: item.year,
         repo: item.repo || undefined,
         demo: item.demo && availableDemos.has(item.id) ? item.demo : undefined,
-        onSelect: scrollToGallery,
+        onSelect: scrollToServices,
       })),
     [availableDemos],
   )
@@ -143,10 +143,10 @@ export default function Projects() {
         >
           <button
             type="button"
-            onClick={scrollToGallery}
+            onClick={scrollToServices}
             className="mt-8 inline-flex min-h-[44px] cursor-pointer items-center gap-3 rounded-full border-0 bg-[#0B0B0B] px-7 py-4 text-base font-semibold text-white transition-transform duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#111]"
           >
-            View gallery
+            See what I do
             <svg
               width="18"
               height="18"

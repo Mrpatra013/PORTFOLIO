@@ -67,10 +67,14 @@ export interface Social {
 
 export const contactEmail = 'thedesk.studioo@gmail.com'
 
+export const instagramHandle = 'heyyitssahil_'
+export const instagramUrl = `https://www.instagram.com/${instagramHandle}/`
+
 export const navLinks = [
   { label: 'About', href: '#about' },
   { label: 'Work', href: '#work' },
-  { label: 'Contact Us', href: '#contact' },
+  { label: 'Services', href: '#services' },
+  { label: 'Contact', href: '#contact' },
 ]
 
 // The ten screen-recorded reels, web-encoded into public/Projects/web — see
@@ -269,6 +273,45 @@ export const services: Service[] = [
   },
   {
     id: '02',
+    title: 'Brand Identity',
+    tag: 'Look the part',
+    blurb: 'Branding and UI design that make your business look as good as it is, everywhere it shows up.',
+    details: {
+      intro:
+        'Before a visitor reads a word, they decide whether to trust you. I build the identity and interface that make that first impression work for you, so your site, socials and product all look like one confident brand.',
+      meta: [
+        { label: 'Timeline', value: '1 to 3 weeks' },
+        { label: 'Hand-off', value: 'Figma + brand guide' },
+      ],
+      groups: [
+        {
+          heading: 'Branding',
+          items: [
+            'Logo and logo variations for every use',
+            'Colour palette and typography system',
+            'Brand voice: how you sound in copy and captions',
+            'Social media templates and profile kit',
+            'A brand guide so anyone can stay on-brand',
+          ],
+        },
+        {
+          heading: 'UI design',
+          items: [
+            'Website and app UI designed around how people actually browse and buy',
+            'Wireframes and user flows before any pixels',
+            'High-fidelity screens for desktop and mobile',
+            'Clickable prototype to test before building',
+            'A reusable component library and design system',
+          ],
+        },
+      ],
+      bestFor:
+        'New brands launching from scratch, and businesses whose look no longer matches the quality of what they sell.',
+      note: 'Pairs naturally with a Sales System build, so the design and the system are made for each other.',
+    },
+  },
+  {
+    id: '03',
     title: 'Sales System Starter',
     tag: 'Get seen',
     blurb: 'A fast website that captures every lead, replies instantly and reminds the people who didn’t buy.',
@@ -310,7 +353,7 @@ export const services: Service[] = [
     },
   },
   {
-    id: '03',
+    id: '04',
     title: 'Full Sales System',
     tag: 'Sell more',
     blurb: 'A website or store with all four jobs built in: capture, respond, follow up and bring buyers back.',
@@ -348,7 +391,7 @@ export const services: Service[] = [
     },
   },
   {
-    id: '04',
+    id: '05',
     title: 'Business Automation',
     tag: 'Work less',
     blurb: 'Custom tools and workflows that take the repetitive work off your team’s plate.',
@@ -386,7 +429,7 @@ export const services: Service[] = [
     },
   },
   {
-    id: '05',
+    id: '06',
     title: 'Custom Web & Mobile Apps',
     tag: 'Build the product',
     blurb: 'Products, portals and platforms built from scratch, from a startup MVP to a customer portal.',
@@ -424,7 +467,7 @@ export const services: Service[] = [
     },
   },
   {
-    id: '06',
+    id: '07',
     title: 'Growth Care',
     tag: 'Keep it working',
     blurb: 'Your site and systems looked after and improved every month, so they keep working while you run the business.',
@@ -453,12 +496,12 @@ export const services: Service[] = [
 
 export const testimonials: Testimonial[] = [
   {
-    text: 'They rebuilt our site in three weeks and doubled our conversion rate. Not average. Not even close.',
+    text: 'Sahil rebuilt our site in three weeks and every enquiry now gets a reply in seconds. Calm, honest, and fast.',
     name: 'Maya Chen',
     role: 'Founder, Novaline',
   },
   {
-    text: 'The first agency that pushed back on our ideas — and was right every time.',
+    text: 'The first developer who pushed back on our ideas — and was right every time.',
     name: 'Daniel Okafor',
     role: 'CEO, Forge Labs',
   },
@@ -478,7 +521,7 @@ export const testimonials: Testimonial[] = [
     role: 'Founder, Studio Rossi',
   },
   {
-    text: 'Clean code, real SEO gains, and a team that actually answers Slack.',
+    text: 'Clean code, real SEO gains, and someone who actually answers messages.',
     name: 'Tom Becker',
     role: 'CTO, Driftware',
   },
@@ -579,7 +622,7 @@ export const stickers: Sticker[] = [
 
 export const socials: Social[] = [
   { label: 'Twitter / X', href: '#' },
-  { label: 'Instagram', href: '#' },
+  { label: 'Instagram', href: 'https://www.instagram.com/heyyitssahil_/' },
   { label: 'LinkedIn', href: '#' },
   { label: 'Dribbble', href: '#' },
 ]

@@ -132,13 +132,13 @@ export default function HoverDeck({ items }: HoverDeckProps) {
         const cardW = 'clamp(170px, 26vw, 460px)'
 
         // One primary destination per card, best first: the local build if it's
-        // there, else the source on GitHub, else back to the gallery. Only the
+        // there, else the source on GitHub, else on to the services. Only the
         // last case is a fake link that has to swallow its own click.
         const primary = item.demo
           ? { href: item.demo, label: `Open the ${item.title} demo` }
           : item.repo
             ? { href: item.repo, label: `View the ${item.title} source on GitHub` }
-            : { href: '#gallery', label: `${item.title} — see it in the gallery` }
+            : { href: '#services', label: `${item.title} — see what I do` }
         const isNavigation = Boolean(item.demo || item.repo)
 
         return (

@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 /**
  * Where the form posts. FormSubmit relays the submission straight to
- * `contactEmail`, which keeps this a fully static site (no server of our own).
+ * `contactEmail`, which keeps this a fully static site (no server of its own).
  * Override with VITE_CONTACT_ENDPOINT in .env to point at any endpoint that
  * accepts a JSON POST — e.g. a Formspree form or your own API.
  *
@@ -84,10 +84,10 @@ export default function ContactCard() {
           email,
           // Replies from the inbox go straight back to whoever wrote in.
           _replyto: email,
-          _subject: `New enquiry from ${name} — TheDesk`,
+          _subject: `New enquiry from ${name} — Sahil Patra`,
           _template: 'table',
           _captcha: 'false',
-          message: `${name} (${email}) would like to talk about a project.`,
+          message: `${name} (${email}) would like to talk about their website.`,
         }),
       })
       if (!res.ok) throw new Error(`Request failed: ${res.status}`)
@@ -100,8 +100,8 @@ export default function ContactCard() {
 
   // Fallback for a failed send: opens the visitor's mail client, pre-filled.
   const mailtoHref = () => {
-    const subject = encodeURIComponent('New enquiry — TheDesk')
-    const body = encodeURIComponent("Hi, I'd like to talk about a project.")
+    const subject = encodeURIComponent('New enquiry — Sahil Patra')
+    const body = encodeURIComponent("Hi Sahil, I'd like to talk about my website.")
     return `mailto:${contactEmail}?subject=${subject}&body=${body}`
   }
 
@@ -118,7 +118,7 @@ export default function ContactCard() {
     >
       <div className="flex items-stretch gap-6">
         <div className="min-w-0 flex-1">
-          <h3 className="text-4xl font-semibold tracking-tight text-[#161616] md:text-5xl">Just Say, Hello!</h3>
+          <h3 className="text-4xl font-semibold tracking-tight text-[#161616] md:text-5xl">Say hi to Sahil!</h3>
 
           <form onSubmit={onSubmit} className="mt-8">
             <label className="block">
@@ -160,17 +160,17 @@ export default function ContactCard() {
               disabled={status === 'sending'}
               className="mt-9 w-full cursor-pointer rounded-full border-0 bg-[#111111] py-4 text-base font-semibold text-white transition-transform duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black disabled:cursor-wait disabled:opacity-70 disabled:hover:scale-100"
             >
-              {status === 'sending' ? 'Sending…' : 'Let`s figure it out!'}
+              {status === 'sending' ? 'Sending…' : 'Show me where I’m leaking sales'}
             </button>
 
             {/* aria-live so the outcome is announced, not just shown. */}
             <p aria-live="polite" className="mt-4 min-h-[1.5rem] text-sm font-medium text-[#161616]">
-              {status === 'sent' && "Thanks — your message is on its way. We'll be in touch shortly."}
+              {status === 'sent' && "Thanks — got it. I reply within 24 hours on weekdays."}
               {status === 'error' && (
                 <>
                   Something went wrong sending that.{' '}
                   <a href={mailtoHref()} className="underline underline-offset-2">
-                    Email us directly
+                    Email me directly
                   </a>
                   .
                 </>

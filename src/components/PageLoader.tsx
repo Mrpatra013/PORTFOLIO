@@ -58,19 +58,11 @@ export default function PageLoader() {
         animate={{ opacity: exiting ? 0 : 1, y: exiting ? -12 : 0 }}
         transition={{ type: "spring", stiffness: 260, damping: 26 }}
       >
-        <div className="flex items-center gap-2 text-2xl font-semibold sm:text-[1.875rem]">
-          <img
-            src="/hero/logo.png"
-            alt=""
-            className="h-8 w-8 object-contain sm:h-9 sm:w-9"
-          />
-          <span>
-            TheDesk<span className="text-[#E86100]">.</span>
-          </span>
-        </div>
-        <p className="max-w-[24ch] text-sm text-white/55">
-          We Don&apos;t Do Average.
-        </p>
+        <img
+          src="/hero/logo.png"
+          alt=""
+          className="h-8 w-8 object-contain sm:h-9 sm:w-9"
+        />
       </motion.div>
 
       <div className="flex w-[min(22rem,72vw)] flex-col gap-3">

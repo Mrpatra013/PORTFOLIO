@@ -23,7 +23,7 @@ export default function Hero() {
       >
         <img src="/hero/logo.png" alt="Logo" className="h-14 w-14 object-contain sm:h-16 sm:w-16" />
         <span className="text-2xl font-bold text-white sm:text-3xl">
-          TheDesk<span className="text-[#E86100]">.</span>
+          Sahil Patra<span className="text-[#E86100]">.</span>
         </span>
       </motion.a>
       <div className="pointer-events-none absolute inset-0 z-[2] flex items-center justify-between gap-8 px-5 md:px-10">
@@ -34,10 +34,10 @@ export default function Hero() {
             transition={{ duration: 0.7, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="font-black uppercase leading-[0.85] tracking-tight text-white text-[15vw] sm:text-[11vw] lg:text-[7.5vw]"
           >
-            <span className="block">We</span>
-            <span className="block">Don't</span>
-            <span className="block">Do</span>
-            <span className="block text-[#E86100]">Average.</span>
+            <span className="block">I Build</span>
+            <span className="block">Sites</span>
+            <span className="block">That</span>
+            <span className="block text-[#E86100]">Sell.</span>
           </motion.h1>
           <motion.div
             initial={{ opacity: 0, y: 16 }}

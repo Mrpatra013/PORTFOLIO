@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { HOLD_VH } from './StickySection'
 
 const ASSET_BASE = '/hero'
 // baseSrc = always-visible base layer (the LCP image)
@@ -95,9 +96,10 @@ export default function LiquidReveal() {
     let points: Point[] = []
     let last: Point | null = null
 
-    // The hero stays pinned under the gallery sheet, so once the page has
-    // scrolled ~one viewport it is fully covered — stop all canvas work then.
-    const isCovered = () => window.scrollY >= window.innerHeight * 0.98
+    // The hero holds for HOLD_VH, then the About sheet slides over it; once
+    // that has scrolled ~one more viewport the hero is fully covered — stop
+    // all canvas work then.
+    const isCovered = () => window.scrollY >= window.innerHeight * (0.98 + HOLD_VH)
     let wasCovered = false
 
     const onPointerMove = (e: PointerEvent) => {

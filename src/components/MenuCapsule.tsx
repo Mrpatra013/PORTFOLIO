@@ -38,7 +38,7 @@ export default function MenuCapsule() {
     >
       <div
         className={`relative flex items-center overflow-hidden rounded-full bg-white transition-[width,height] duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] ${
-          open ? 'h-[71px] w-[300px] sm:w-[380px]' : 'h-[59px] w-[59px]'
+          open ? 'h-[71px] w-[340px] sm:w-[460px]' : 'h-[59px] w-[59px]'
         }`}
       >
         <nav

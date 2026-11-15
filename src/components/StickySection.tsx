@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 
+/**
+ * How long a pinned section holds, fully visible, before the next one starts
+ * sliding over it — as a fraction of the viewport height of extra scrolling.
+ */
+export const HOLD_VH = 0.5
+
 interface StickySectionProps {
   children: ReactNode
   zIndex: number
@@ -16,6 +22,10 @@ interface StickySectionProps {
  * Sections are taller than the viewport, so `top: 0` would pin their heads and
  * clip everything below the fold. Offsetting by `viewportHeight - sectionHeight`
  * pins the tail instead, which lets the whole section be read on the way past.
+ *
+ * After each pinned section comes an empty spacer (HOLD_VH of the viewport).
+ * The section stays stuck while the spacer scrolls past, so it holds on screen
+ * for a beat before the next section arrives to cover it.
  */
 export default function StickySection({ children, zIndex, pin = true }: StickySectionProps) {
   const ref = useRef<HTMLDivElement>(null)
@@ -43,12 +53,15 @@ export default function StickySection({ children, zIndex, pin = true }: StickySe
   }, [pin])
 
   return (
-    <div
-      ref={ref}
-      className={pin ? 'sticky' : 'relative'}
-      style={{ top: pin ? top : undefined, zIndex }}
-    >
-      {children}
-    </div>
+    <>
+      <div
+        ref={ref}
+        className={pin ? 'sticky' : 'relative'}
+        style={{ top: pin ? top : undefined, zIndex }}
+      >
+        {children}
+      </div>
+      {pin && <div aria-hidden="true" style={{ height: `${HOLD_VH * 100}vh` }} />}
+    </>
   )
 }

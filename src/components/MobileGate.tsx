@@ -1,5 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, type CSSProperties } from "react";
+import { motion, type Variants } from "framer-motion";
+import LanyardCard from "./ui/LanyardCard";
+import InflateName from "./ui/InflateName";
 
 /**
  * Anything narrower than the `lg` breakpoint gets the gate. That's the same
@@ -9,20 +11,8 @@ import { motion } from "framer-motion";
  */
 const MOBILE_QUERY = "(max-width: 1023px)";
 
-/** Survives in-session reloads, but every fresh visit sees the notice again. */
-const DISMISSED_KEY = "thedesk:mobile-gate-dismissed";
-
-const readDismissed = () => {
-  try {
-    return sessionStorage.getItem(DISMISSED_KEY) === "1";
-  } catch {
-    // Private-mode Safari throws on storage access; treat it as "not dismissed".
-    return false;
-  }
-};
-
 /**
- * True while the visitor should see the desktop notice instead of the site.
+ * True while the visitor is on a small screen.
  *
  * Read synchronously on the first render (this is a client-rendered SPA, so
  * `matchMedia` is available before paint) — otherwise the real page would
@@ -34,7 +24,6 @@ export function useMobileGate() {
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" && window.matchMedia(MOBILE_QUERY).matches,
   );
-  const [dismissed, setDismissed] = useState(readDismissed);
 
   useEffect(() => {
     const mql = window.matchMedia(MOBILE_QUERY);
@@ -44,35 +33,88 @@ export function useMobileGate() {
     return () => mql.removeEventListener("change", onChange);
   }, []);
 
-  const dismiss = useCallback(() => {
-    try {
-      sessionStorage.setItem(DISMISSED_KEY, "1");
-    } catch {
-      // Storage is optional — the dismissal just won't outlive this render.
-    }
-    setDismissed(true);
-  }, []);
-
-  return { blocked: isMobile && !dismissed, dismiss };
+  return { blocked: isMobile };
 }
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
+const FONTS_HREF =
+  "https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;500;600&family=Funnel+Sans:wght@400;500;600&display=swap";
+
+/** Gate-only palette: a white, quiet page with the brand orange as the accent. */
+const tokens = {
+  "--g-bg": "#ffffff",
+  "--g-ink": "#0e0e12",
+  "--g-ink-2": "#61606f",
+  "--g-ink-3": "#9c9baa",
+  "--g-soft": "#F4B184",
+  "--g-soft-ink": "#F4B184",
+  "--g-dot": "#E86100",
+  "--g-line": "rgba(14,14,18,.08)",
+  "--g-sans": "'Funnel Sans', system-ui, sans-serif",
+  "--g-disp": "'Funnel Display', 'Funnel Sans', system-ui, sans-serif",
+} as CSSProperties;
+
+/** Card scale, strap length and anchor, worked out from the viewport. */
+function useRigLayout() {
+  const measure = () => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const strap = Math.round(vh * 0.14);
+    // The card's bottom edge lands about two-thirds down, overlapping the big
+    // name — and never wider than ~72% of the screen.
+    const byHeight = (vh * 0.67 - strap) / (96 + 430);
+    const byWidth = (vw * 0.72) / 300;
+    const scale = Math.max(0.5, Math.min(1.1, byHeight, byWidth));
+    const anchor = Math.min(vw * 0.62, vw - 12 - 150 * scale);
+    return { scale, strap, anchorX: Math.round(anchor) };
+  };
+
+  const [layout, setLayout] = useState(measure);
+  useEffect(() => {
+    const onResize = () => setLayout(measure());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+  return layout;
+}
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
-export default function MobileGate({ onContinue }: { onContinue: () => void }) {
+/**
+ * Small-screen view: a single, unscrollable screen with a hanging ID card,
+ * a "built for the desktop" note and a copy-link button. Nothing from the
+ * real site (Lenis, ScrollTrigger, the hero scene) is mounted.
+ */
+export default function MobileGate() {
+  const rig = useRigLayout();
   const [copied, setCopied] = useState(false);
 
-  // The page never scrolls behind the gate, but iOS still rubber-bands the
-  // body under a fixed layer unless it's pinned.
+  // Display fonts for the gate only — the desktop site never pays for them.
   useEffect(() => {
-    const { style } = document.documentElement;
-    style.overflow = "hidden";
-    style.height = "100%";
+    if (document.querySelector(`link[href="${FONTS_HREF}"]`)) return;
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = FONTS_HREF;
+    document.head.appendChild(link);
+  }, []);
+
+  // Pin the page (no rubber-banding on iOS) and paint the overscroll white.
+  useEffect(() => {
+    const html = document.documentElement;
+    const { body } = document;
+    for (const el of [html, body]) {
+      el.style.overflow = "hidden";
+      el.style.height = "100%";
+      el.style.background = "#ffffff";
+    }
     return () => {
-      style.removeProperty("overflow");
-      style.removeProperty("height");
+      for (const el of [html, body]) {
+        el.style.removeProperty("overflow");
+        el.style.removeProperty("height");
+        el.style.removeProperty("background");
+      }
     };
   }, []);
 
@@ -84,7 +126,7 @@ export default function MobileGate({ onContinue }: { onContinue: () => void }) {
 
   const copyLink = async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      await navigator.clipboard.writeText(window.location.origin + window.location.pathname);
       setCopied(true);
     } catch {
       // No clipboard permission (or no HTTPS) — leave the label alone rather
@@ -93,100 +135,86 @@ export default function MobileGate({ onContinue }: { onContinue: () => void }) {
   };
 
   return (
-    <motion.section
+    <motion.main
       initial="hidden"
       animate="visible"
-      variants={{ visible: { transition: { staggerChildren: 0.09, delayChildren: 0.1 } } }}
-      className="relative flex h-svh min-h-[100vh] w-full flex-col justify-between overflow-hidden bg-black px-6 py-10 text-white"
+      variants={{ visible: { transition: { staggerChildren: 0.08, delayChildren: 0.15 } } }}
+      className="fixed inset-0 overflow-hidden bg-[var(--g-bg)] text-[var(--g-ink)] antialiased"
+      style={{ ...tokens, fontFamily: "var(--g-sans)" }}
     >
-      {/* Warm floor glow — a quiet echo of the site's accent, no animation cost. */}
+      {/* Top copy */}
       <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-40 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-[#E86100] opacity-20 blur-[120px]"
-      />
-
-      <motion.div variants={fadeUp} className="relative z-10 flex items-center gap-1">
-        <img src="/hero/logo.png" alt="" className="h-12 w-12 object-contain" />
-        <span className="text-2xl font-bold">
-          TheDesk<span className="text-[#E86100]">.</span>
-        </span>
-      </motion.div>
-
-      <div className="relative z-10 flex flex-col items-start">
-        <motion.span
+        className="relative z-[3] flex flex-col"
+        style={{
+          paddingTop: "calc(env(safe-area-inset-top, 0px) + 36px)",
+          paddingLeft: "max(24px, env(safe-area-inset-left, 0px))",
+          paddingRight: "max(24px, env(safe-area-inset-right, 0px))",
+        }}
+      >
+        <motion.p
           variants={fadeUp}
-          className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-1.5 text-[11px] font-medium uppercase tracking-[0.18em] text-white/70"
+          className="flex items-center gap-2 text-[11px] uppercase tracking-[0.08em] text-[var(--g-ink-3)]"
         >
-          <span className="h-1.5 w-1.5 rounded-full bg-[#E86100]" />
-          Desktop experience
-        </motion.span>
-
+          <i className="h-[5px] w-[5px] rounded-full bg-[var(--g-dot)]" />
+          Sahil Patra · Studio
+        </motion.p>
         <motion.h1
           variants={fadeUp}
-          className="font-black uppercase leading-[0.88] tracking-tight text-[13vw] sm:text-[9vw]"
+          className="mt-3.5 max-w-[11em] text-[24px] font-medium leading-[1.05] tracking-[-0.035em] sm:text-[34px]"
+          style={{ fontFamily: "var(--g-disp)" }}
         >
-          <span className="block">Best</span>
-          <span className="block">Seen On</span>
-          <span className="block text-[#E86100]">Desktop.</span>
+          I build websites
+          <span className="block text-[var(--g-soft)]">that sell.</span>
         </motion.h1>
+      </div>
 
-        <motion.p variants={fadeUp} className="mt-6 max-w-md text-[15px] leading-relaxed text-white/65">
-          This portfolio was built around motion — scroll-driven sequences, pinned
-          sections and transitions that were tuned frame by frame. A phone screen
-          simply can&apos;t carry them.
-        </motion.p>
-        <motion.p variants={fadeUp} className="mt-3 max-w-md text-[15px] leading-relaxed text-white/65">
-          Open it on a laptop or desktop to see the work as it was designed — and
-          as it was worth building.
-        </motion.p>
+      {/* Big name + desktop note, pinned to the bottom. */}
+      <div
+        className="absolute inset-x-0 bottom-0 flex flex-col"
+        style={{
+          paddingLeft: "max(24px, env(safe-area-inset-left, 0px))",
+          paddingRight: "max(24px, env(safe-area-inset-right, 0px))",
+          paddingBottom: "calc(32px + env(safe-area-inset-bottom, 0px))",
+        }}
+      >
+        <motion.div variants={fadeUp} className="relative z-[1]">
+          <InflateName
+            lines={["Sahil", "Patra"]}
+            className="-ml-[0.04em] select-none font-medium leading-[0.84] tracking-[-0.055em] text-[var(--g-soft)]"
+            style={{ fontFamily: "var(--g-disp)", fontSize: "min(30vw, 19svh)" }}
+          />
+        </motion.div>
 
-        <motion.div variants={fadeUp} className="mt-8 flex w-full flex-wrap items-center gap-3">
+        <motion.div variants={fadeUp} className="relative z-[3] mt-7 grid max-w-[21em] justify-items-start gap-2">
+          <p className="text-[22px] font-medium leading-[1.05] tracking-[-0.03em]" style={{ fontFamily: "var(--g-disp)" }}>
+            Built for the desktop.
+          </p>
+          <p className="text-[12.5px] leading-[1.6] text-[var(--g-ink-2)] [@media(max-height:719px)]:hidden">
+            This portfolio is designed for a larger screen. Open it on a computer to see it as it was meant to be seen.
+          </p>
           <button
             type="button"
             onClick={copyLink}
-            className="flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 text-[15px] font-medium text-[#111] transition-transform active:scale-95"
+            className="mt-2 inline-flex items-center gap-2.5 text-[11px] font-medium uppercase leading-none tracking-[0.08em] text-[var(--g-ink)]"
           >
-            {copied ? "Link copied" : "Copy link for later"}
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#E86100]">
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
+            <span>{copied ? "Link copied" : "Copy link"}</span>
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-[var(--g-ink)] text-white">
+              <svg viewBox="0 0 12 12" fill="none" className="h-3 w-3" aria-hidden="true">
                 {copied ? (
-                  <polyline points="20 6 9 17 4 12" />
+                  <path d="M2.5 6.2L5 8.5L9.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 ) : (
-                  <>
-                    <rect x="9" y="9" width="12" height="12" rx="2" />
-                    <path d="M5 15V5a2 2 0 0 1 2-2h10" />
-                  </>
+                  <path d="M3 9L9 3M9 3H4.2M9 3V7.8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
                 )}
               </svg>
             </span>
           </button>
-
-          <button
-            type="button"
-            onClick={onContinue}
-            className="rounded-full px-4 py-3.5 text-[15px] text-white/50 underline underline-offset-4 transition-colors active:text-white"
-          >
-            Continue anyway
-          </button>
         </motion.div>
       </div>
 
-      <motion.p
-        variants={fadeUp}
-        className="relative z-10 text-[11px] uppercase tracking-[0.18em] text-white/35"
-      >
-        Thanks for stopping by
-      </motion.p>
-    </motion.section>
+      {/* The hanging card sits above everything on the page. */}
+      <div className="pointer-events-none absolute inset-0 z-[60]">
+        <LanyardCard {...rig} />
+      </div>
+    </motion.main>
   );
 }
